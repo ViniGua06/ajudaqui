@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MissingType {
+  ANIMAL
+  PERSON
+  SMALL_SIZE_OBJECT
+  MEDIUM_SIZE_OBJECT
+  LARGE_SIZE_OBJECT
+}
+
+enum MissingVisibilityType {
+  PUBLIC
+  PRIVATE
+}
+
+enum ChatMessageType {
+  IMAGE
+  VIDEO
+  TEXT
+  AUDIO
+}
+
+enum PrivateMissingPermissionType {
+  ACCEPTED
+  BLOCKED
+}
+
+enum PrivateInviteType {
+  SENT_BY_AUTHOR
+  SENT_BY_PARTICIPANT
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  photo String?
+
+  auth UserAuth? 
+
+  privateMissingPermissions PrivateMissingPermission[]
+  privateInvites PrivateInvite[]
+
+  messages Message[]
+  createdAt DateTime @default(now())
+}
+
+model UserAuth {
+  id Int @id @default(autoincrement())
+  email String
+  password String
+  cpf String
+  phone String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int @unique
+
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id Int @id @default(autoincrement())
+  hash String @default(nanoid())
+  expiresAt DateTime 
+  userAuth UserAuth @relation(fields: [userAuthId], references: [id])
+  userAuthId Int
+}
+
+model Missing {
+  id Int @id @default(autoincrement())
+  photo String?
+  name String
+  type MissingType
+  visbility MissingVisibilityType
+  reward Decimal?
+  desc String
+  lat Decimal
+  long Decimal
+  address String
+  missingDate DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  keyPoints KeyPoint[]
+
+  chats Chat[]
+
+  privateMissingPermissions PrivateMissingPermission[]
+
+  privateInvites PrivateInvite[]
+}
+
+model KeyPoint {
+  id Int @id @default(autoincrement())
+  name String
+  desc String
+  lat Decimal
+  long Decimal
+  address String
+
+  missing Missing @relation(fields: [missingId], references: [id], onDelete: Cascade)
+  missingId Int
+}
+
+model Chat {
+  id Int @id @default(autoincrement())
+  missing Missing @relation(fields: [missingId], references: [id])
+  missingId Int
+
+  messages Message[]
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  messageType ChatMessageType
+  message String
+  author User @relation(fields: [authorid], references: [id])
+  authorid Int
+
+  chat Chat @relation(fields: [chatId], references: [id])
+  chatId Int
+
+  sentAt DateTime @default(now())
+}
+
+model PrivateMissingPermission {
+  id Int @id @default(autoincrement())
+  person User @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId Int
+  type PrivateMissingPermissionType
+  missing Missing @relation(fields: [missingId], references: [id], onDelete: Cascade)
+  missingId Int
+}
+
+model PrivateInvite {
+  id Int @id @default(autoincrement())
+  type PrivateInviteType
+  missing Missing @relation(fields: [missingId], references: [id], onDelete: Cascade)
+  missingId Int
+  target User @relation(fields: [targetId], references: [id])
+  targetId Int
+}
