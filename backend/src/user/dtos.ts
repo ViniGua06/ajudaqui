@@ -1,10 +1,10 @@
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
-  IsIn,
   IsInt,
   IsOptional,
   IsString,
+  Matches,
   Min,
   MinLength,
 } from 'class-validator';
@@ -27,13 +27,13 @@ export class GetAllUsersDto {
   @Type(() => Array)
   @IsArray({ message: 'Select deve ser uma lista' })
   // Deixar apenas os items retornáveis
-  @Transform(({ value }: { value: string[] }) => {
+  @Transform(({ value }: { value: string[] | any[] }) => {
     value.filter((item: string) => SELECTABLE_USER_COLUMNS.includes(item));
   })
   select?: string[];
 }
 
-export class GetUserByIdParamDto {
+export class IdParamDto {
   @Type(() => Number)
   @IsInt({ message: 'ID deve ser numérico' })
   @Min(0, { message: 'ID deve ser positivo' })
@@ -51,4 +51,22 @@ export class CreateUserDto {
   @IsString({ message: 'Nome deve ser um texto' })
   @MinLength(6, { message: 'Nome deve ter no mínimo 6 caracteres' })
   name!: string;
+}
+
+export class PatchUserDto {
+  @IsOptional()
+  @IsString({ message: 'Nome deve ser um texto' })
+  name?: string;
+
+  @IsOptional()
+  @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+    message: 'CPF deve estar no formato 000.000.000-00',
+  })
+  cpf?: string;
+
+  @IsOptional()
+  @Matches(/^\(\d{2}\)\s\d{5}-\d{4}$/, {
+    message: 'Telefone deve estar no formato (99) 99999-9999',
+  })
+  phone?: string;
 }

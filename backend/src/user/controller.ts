@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UploadedFile,
@@ -13,8 +14,9 @@ import { UserServices } from './service';
 import {
   CreateUserDto,
   GetAllUsersDto,
-  GetUserByIdParamDto,
+  IdParamDto,
   GetUserByIdSelectDto,
+  PatchUserDto,
 } from './dtos';
 import { AuthGuard } from 'src/guards/auth';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -35,7 +37,7 @@ export default class UserController {
 
   @Get(':id')
   async getUserById(
-    @Param() params: GetUserByIdParamDto,
+    @Param() params: IdParamDto,
     @Body() body: GetUserByIdSelectDto,
     @Req() req,
   ) {
@@ -54,8 +56,18 @@ export default class UserController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return {
-      statusCode: 200,
+      statusCode: 201,
       userId: await this.userServices.createUser(body.name, file),
+    };
+  }
+
+  @Patch(':id')
+  async updateUser(@Param() param: IdParamDto, @Body() body: PatchUserDto) {
+    await this.userServices.updateUser(param.id, body);
+
+    return {
+      statusCode: 200,
+      message: 'Atualizado',
     };
   }
 }

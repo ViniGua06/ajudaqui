@@ -74,4 +74,8 @@ export class UserServices {
     }
     return user.id;
   };
+
+  updateUser = async (id: number, data: {}) => {
+    await this.userRepository.updateUser(id, data);
+  };
 }
