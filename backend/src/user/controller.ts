@@ -63,13 +63,9 @@ export default class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Patch(':id')
-  async updateUser(
-    @Param() param: IdParamDto,
-    @Body() body: PatchUserDto,
-    @Req() req,
-  ) {
-    await this.userServices.updateUser(req.userId, param.id, body);
+  @Patch()
+  async updateUser(@Body() body: PatchUserDto, @Req() req) {
+    await this.userServices.updateUser(req.userId, body);
 
     return {
       statusCode: 200,
@@ -78,14 +74,13 @@ export default class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Patch(':id')
+  @Patch('photo')
   @UseInterceptors(FileInterceptor('file'))
   async upsertUserPhoto(
-    @Param() param: IdParamDto,
     @Req() req,
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    await this.userServices.upsertUserPhoto(req.userId, param.id, file);
+    await this.userServices.upsertUserPhoto(req.userId, file);
 
     return {
       statusCode: 200,
