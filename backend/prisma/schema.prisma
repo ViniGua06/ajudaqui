@@ -90,6 +90,7 @@ model Missing {
   long Decimal
   address String
   missingDate DateTime
+  closed Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
