@@ -28,27 +28,20 @@ export class UserServices {
     const sl: Prisma.UserSelect = {};
 
     if (select) {
-      // Lista de campos possíveis de serem retornados
-      const possibleFields = ['id', 'name', 'photo', 'email', 'cpf', 'phone'];
       // Lista de campos com dados sensíveis (só podem ser visualizados pelo próprio usuário)
-      const sensitiveFields = ['email', 'cpf', 'phone'];
+      const sensitiveFields = ['cpf', 'phone'];
 
-      // Filtrar apenas os campos existentes
-      const filteredArray = select.filter((item) =>
-        possibleFields.includes(item),
-      );
+      let newSelect: string[] = [];
 
-      for (const item of filteredArray) {
-        // Se for um campo sensível, buscar do relacionamento com a tabela UserAuth
-        if (sensitiveFields.includes(item)) {
-          if (fromId == toId) {
-            sl.auth = {};
-            sl.auth['select'] = {};
-            sl.auth['select'][item] = true;
-          }
-        } else {
-          sl[item] = true;
-        }
+      // Se o usuário estiver fazendo a requisição para pegar informações dele mesmo, permitir o retorno de dados sensíveis
+      if (fromId == toId) {
+        newSelect = select;
+      } else {
+        newSelect = select.filter((item) => !sensitiveFields.includes(item));
+      }
+
+      for (const item of newSelect) {
+        sl[item] = true;
       }
     }
 

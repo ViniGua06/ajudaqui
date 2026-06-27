@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
@@ -9,7 +10,10 @@ import {
   MinLength,
 } from 'class-validator';
 
-// Colunas retornáveis do DB em responses
+// Todas as colunas do Usuário
+const USER_COLUMNS = ['id', 'name', 'photo', 'cpf', 'phone', 'createdAt'];
+
+// Colunas retornáveis não-sensíveis do DB em responses
 const SELECTABLE_USER_COLUMNS = ['id', 'name', 'photo', 'createdAt'];
 
 export class GetAllUsersDto {
@@ -44,6 +48,9 @@ export class GetUserByIdSelectDto {
   @IsOptional()
   @Type(() => Array)
   @IsArray({ message: 'Select deve ser uma lista' })
+  @Transform(({ value }: { value: string[] | any[] }) => {
+    value.filter((item) => USER_COLUMNS.includes(item));
+  })
   select?: string[];
 }
 
