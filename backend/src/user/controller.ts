@@ -21,11 +21,11 @@ import {
 import { AuthGuard } from 'src/guards/auth';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@UseGuards(AuthGuard)
 @Controller('User')
 export default class UserController {
   constructor(private readonly userServices: UserServices) {}
 
+  @UseGuards(AuthGuard)
   @Get()
   async getAllUsers(@Body() body: GetAllUsersDto) {
     const { skip, take, select } = body;
@@ -35,6 +35,7 @@ export default class UserController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   async getUserById(
     @Param() params: IdParamDto,
@@ -61,6 +62,7 @@ export default class UserController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async updateUser(@Param() param: IdParamDto, @Body() body: PatchUserDto) {
     await this.userServices.updateUser(param.id, body);
