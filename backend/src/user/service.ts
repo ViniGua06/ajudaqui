@@ -79,4 +79,22 @@ export class UserServices {
     if (fromId != toId) throw new ForbiddenException('Permissão negada');
     await this.userRepository.updateUser(toId, data);
   };
+
+  upsertUserPhoto = async (
+    fromId: number,
+    toId: number,
+    file?: Express.Multer.File,
+  ) => {
+    if (fromId != toId) throw new ForbiddenException('Permissão negada');
+
+    if (file) {
+      await this.supabaseService.uploadFile(`USER_${toId}.jpg`, 'image', file);
+      const photoUrl = await this.supabaseService.getFile(
+        `USER_${fromId}.jpg`,
+        'image',
+      );
+
+      await this.userRepository.updateUser(fromId, { photo: photoUrl });
+    }
+  };
 }

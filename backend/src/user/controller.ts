@@ -76,4 +76,20 @@ export default class UserController {
       message: 'Atualizado',
     };
   }
+
+  @UseGuards(AuthGuard)
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
+  async upsertUserPhoto(
+    @Param() param: IdParamDto,
+    @Req() req,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    await this.userServices.upsertUserPhoto(req.userId, param.id, file);
+
+    return {
+      statusCode: 200,
+      message: 'Atualizado',
+    };
+  }
 }
