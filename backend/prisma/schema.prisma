@@ -46,6 +46,8 @@ model User {
   id Int @id @default(autoincrement())
   name String
   photo String?
+  cpf String?
+  phone String?
 
   auth UserAuth? 
 
@@ -60,8 +62,7 @@ model UserAuth {
   id Int @id @default(autoincrement())
   email String
   password String
-  cpf String
-  phone String
+  
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int @unique
