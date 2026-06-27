@@ -74,7 +74,7 @@ model RefreshToken {
   id Int @id @default(autoincrement())
   hash String @default(nanoid())
   expiresAt DateTime 
-  userAuth UserAuth @relation(fields: [userAuthId], references: [id])
+  userAuth UserAuth @relation(fields: [userAuthId], references: [id], onDelete: Cascade)
   userAuthId Int
 }
 
@@ -116,7 +116,7 @@ model KeyPoint {
 
 model Chat {
   id Int @id @default(autoincrement())
-  missing Missing @relation(fields: [missingId], references: [id])
+  missing Missing @relation(fields: [missingId], references: [id], onDelete: Cascade)
   missingId Int
 
   messages Message[]
@@ -126,10 +126,10 @@ model Message {
   id Int @id @default(autoincrement())
   messageType ChatMessageType
   message String
-  author User @relation(fields: [authorid], references: [id])
+  author User @relation(fields: [authorid], references: [id], onDelete: Cascade)
   authorid Int
 
-  chat Chat @relation(fields: [chatId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId Int
 
   sentAt DateTime @default(now())
