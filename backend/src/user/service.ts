@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserRepository } from './repository';
 import { Prisma } from '@prisma/client';
 import { SupabaseService } from 'src/database/supabase.service';
@@ -75,7 +75,8 @@ export class UserServices {
     return user.id;
   };
 
-  updateUser = async (id: number, data: {}) => {
-    await this.userRepository.updateUser(id, data);
+  updateUser = async (fromId: number, toId: number, data: {}) => {
+    if (fromId != toId) throw new ForbiddenException('Permissão negada');
+    await this.userRepository.updateUser(toId, data);
   };
 }

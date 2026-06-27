@@ -64,8 +64,12 @@ export default class UserController {
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async updateUser(@Param() param: IdParamDto, @Body() body: PatchUserDto) {
-    await this.userServices.updateUser(param.id, body);
+  async updateUser(
+    @Param() param: IdParamDto,
+    @Body() body: PatchUserDto,
+    @Req() req,
+  ) {
+    await this.userServices.updateUser(req.userId, param.id, body);
 
     return {
       statusCode: 200,
