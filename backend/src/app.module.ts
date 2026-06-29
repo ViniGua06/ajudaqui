@@ -3,6 +3,9 @@ import { UserModule } from './user/module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
