@@ -49,7 +49,7 @@ model User {
   cpf String?
   phone String?
 
-  auth UserAuth? 
+  auth Auth? 
 
   privateMissingPermissions PrivateMissingPermission[]
   privateInvites PrivateInvite[]
@@ -58,7 +58,7 @@ model User {
   createdAt DateTime @default(now())
 }
 
-model UserAuth {
+model Auth {
   id Int @id @default(autoincrement())
   email String
   password String
@@ -74,8 +74,8 @@ model RefreshToken {
   id Int @id @default(autoincrement())
   hash String @default(nanoid())
   expiresAt DateTime 
-  userAuth UserAuth @relation(fields: [userAuthId], references: [id], onDelete: Cascade)
-  userAuthId Int
+  Auth Auth @relation(fields: [AuthId], references: [id], onDelete: Cascade)
+  AuthId Int
 }
 
 model Missing {
